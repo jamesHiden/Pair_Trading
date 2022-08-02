@@ -1,4 +1,5 @@
 import datetime
+from unittest import signals
 import backtrader as bt
 import backtrader.feeds as btfeeds
 import backtrader.indicators as btind
@@ -79,6 +80,7 @@ class PairTradingStrategy(bt.Strategy):
         if not self.position:
 
             if (self.signal1 < (1-self.cl)) and (self.signal2 > self.cl):
+                print(f'prob s1: {self.signal1} prob s2:{self.signal2}')
 
                 # Placing the order
                 self.log('BUY CREATE %s, price = %.4f' % ("BTC", self.data0.close[0]))
@@ -141,7 +143,7 @@ def runstrategy():
 
     # Create the 1st data
     data0 = GenericCSV_XARF(
-                            dataname    =  '/home/soltani/pair_trading/strat/pair1.csv',
+                            dataname    =  '/home/soltani/pair_trading/project_pair/pair1.csv',
                             dtformat    = 2,
                             # fromdate    = from_time,
                             # todate      = to_time,
@@ -153,7 +155,7 @@ def runstrategy():
 
     # Create the 2nd data
     data1 = GenericCSV_XARF(
-                            dataname    = '/home/soltani/pair_trading/strat/pair2.csv',
+                            dataname    = '/home/soltani/pair_trading/project_pair/pair2.csv',
                             dtformat    = 2,
                             # fromdate    = from_time,
                             # todate      = to_time,

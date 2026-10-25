@@ -1,2 +1,5 @@
 .env
 myvenv/
+__pycache__/
+*.pyc
+chart.html

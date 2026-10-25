@@ -1,0 +1,4 @@
+backtrader==1.9.78.123
+# optional, for the interactive chart:
+# backtrader-plotting==2.0.0
+# bokeh==2.3.3

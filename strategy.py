@@ -1,16 +1,13 @@
 import datetime
-from unittest import signals
 import backtrader as bt
 import backtrader.feeds as btfeeds
 import backtrader.indicators as btind
-from backtrader_plotting import Bokeh
-from backtrader_plotting.schemes import Tradimo
-from numpy import size
-import pandas as pd
+from pathlib import Path
 
 cash                = 100000
 commission          = 0.0004
-plot                = True
+plot                = False   # needs backtrader_plotting (see README)
+HERE                = Path(__file__).resolve().parent
 from_time           = datetime.datetime.strptime('2022-06-15 00:00:00', '%Y-%m-%d %H:%M:%S')                                      
 to_time             = datetime.datetime.strptime('2022-07-21 00:00:00', '%Y-%m-%d %H:%M:%S')
 
@@ -143,7 +140,7 @@ def runstrategy():
 
     # Create the 1st data
     data0 = GenericCSV_XARF(
-                            dataname    =  '/home/soltani/pair_trading/project_pair/pair1.csv',
+                            dataname    =  str(HERE / 'pair1.csv'),
                             dtformat    = 2,
                             # fromdate    = from_time,
                             # todate      = to_time,
@@ -155,7 +152,7 @@ def runstrategy():
 
     # Create the 2nd data
     data1 = GenericCSV_XARF(
-                            dataname    = '/home/soltani/pair_trading/project_pair/pair2.csv',
+                            dataname    = str(HERE / 'pair2.csv'),
                             dtformat    = 2,
                             # fromdate    = from_time,
                             # todate      = to_time,
@@ -177,16 +174,21 @@ def runstrategy():
 
     # And run it
     results = cerebro.run()
-    print(results[0].analyzers.getbyname("trades").get_analysis()['pnl']['net']['total'])
+    trades = results[0].analyzers.getbyname("trades").get_analysis()
+    print('Closed trades :', trades['total']['closed'])
+    print('Won / lost    :', trades['won']['total'], '/', trades['lost']['total'])
+    print('Net PnL       : %.2f' % trades['pnl']['net']['total'])
+    print('Final value   : %.2f' % cerebro.broker.getvalue())
 
     # Plot if requested
     if plot:
-        # cerebro.plot(numfigs = 2, volume=False, zdown=False ,filename = '/home/soltani/pair_trading/chart.html')
+        from backtrader_plotting import Bokeh
+        from backtrader_plotting.schemes import Tradimo
         b = Bokeh(  style               = 'bar', 
                     plot_mode           = 'single', 
                     scheme              = Tradimo(), 
                     legend_text_color   = '#000000', 
-                    filename            = '/home/soltani/pair_trading/html_data/chart.html',
+                    filename            = str(HERE / 'chart.html'),
                     volume              = False)
         cerebro.plot(b)
 
